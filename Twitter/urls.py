@@ -31,8 +31,9 @@ urlpatterns = [
     url(r'^logout/', views.log_out, name='log_out'),
     url(r'^follow/(?P<username>\w+)$', views.follow, name='follow'),
     url('^likes/(?P<username>\w+)/(?P<id>\d+)$', views.likes, name='likes'),
-    url(r'^all_messages$', views.all_messages, name='all_messages'),
-    url(r'^send_messages/(?P<username>\w+)$', views.send_message, name='send_message'),
+    url(r'^all_messages/(?P<username>\w+)$', views.all_messages, name='all_messages'),
+    url(r'^show_message$', views.show_message, name='show_message'),
+    url(r'^send_message$', views.send_message, name='send_message'),
     ]
 
 if settings.DEBUG:

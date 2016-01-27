@@ -1,6 +1,10 @@
+from httplib2 import Response
+
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
+from rest_framework.decorators import api_view
+
 from forms import RegisterForm, PictureForm
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
@@ -11,6 +15,11 @@ import datetime
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+import json
+from django.http import JsonResponse
+from django.core import serializers
+
+from main.serializers import MessageSerializer
 
 
 def register(request):
@@ -145,21 +154,42 @@ def profile_pic(request):
 
 
 @login_required(login_url='login_page')
-def all_messages(request):
-    #  contacts
+@csrf_exempt
+def all_messages(request, username):
+    user = User.objects.get(username=username)
     followings = Following.objects.filter(follower=request.user)
     return render(request, 'allMessages.html', locals())
 
 
 @login_required(login_url='login_page')
-def send_message(request, username):
-    send_from = User.objects.get(username=username)
-    print send_from
-    # if request.method == 'POST':
-    content = request.POST['content']
-    print content
-    #     Messages.objects.create(content=content, send_from=send_from)
-    return render(request, 'allMessages.html')
+@csrf_exempt
+def show_message(request):
+    if request.method == 'GET':
+        global user1
+        user = request.GET['name']
+        user = user.encode('ascii', 'ignore')
+        print user
+        # username = data['name']
+        user1 = User.objects.get(username=user)
+        all_messages = []
+        message1 = Messages.objects.filter(send_from=user1, send_to=request.user)
+        for mes in message1:
+            all_messages.append(mes)
+        message2 = Messages.objects.filter(send_from=request.user, send_to=user1)
+        for mes in message2:
+            all_messages.append(mes)
+        serializer = MessageSerializer(message1, many=True)
+        serializer2 = MessageSerializer(message2, many=True)
+        return JsonResponse(serializer.data + serializer2.data, safe=False)
+
+
+@login_required(login_url='login_page')
+def send_message(request):
+    print user1
+    if request.method == 'POST':
+        message = request.POST['message']
+        Messages.objects.create(send_from=request.user, send_to=user1, content=message)
+        return redirect(reverse('all_messages', args=(request.user,)))
 
 
 @login_required(login_url='login_page')

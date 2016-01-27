@@ -198,25 +198,8 @@
         <!-- Main content -->
         <section class="content">
           <div class="row">
-            <div class="col-md-4">
-              <a href="compose.html" class="btn btn-primary btn-block margin-bottom">Compose</a>
-              <div class="box box-solid">
-                <div class="box-header with-border">
-                  <h3 class="box-title">Folders</h3>
-                  <div class="box-tools">
-                    <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                  </div>
-                </div>
-                <div class="box-body no-padding">
-                  <ul class="nav nav-pills nav-stacked">
-                    <li class="active"><a href="#"><i class="fa fa-inbox"></i> Inbox <span class="label label-primary pull-right">12</span></a></li>
-                    <li><a href="#"><i class="fa fa-envelope-o"></i> Sent</a></li>
-                    <li><a href="#"><i class="fa fa-file-text-o"></i> Drafts</a></li>
-                    <li><a href="#"><i class="fa fa-filter"></i> Junk <span class="label label-warning pull-right">65</span></a></li>
-                    <li><a href="#"><i class="fa fa-trash-o"></i> Trash</a></li>
-                  </ul>
-                </div><!-- /.box-body -->
-              </div><!-- /. box -->
+            <div class="col-md-8">
+
               <!-- DIRECT CHAT -->
               <div class="box box-warning direct-chat direct-chat-warning">
                     <div class="box-header with-border">
@@ -230,80 +213,48 @@
                     </div><!-- /.box-header -->
                     <div class="box-body">
                       <!-- Conversations are loaded here -->
-                      <div class="direct-chat-messages">
+                      <div id="message_content" class="direct-chat-messages">
                         <!-- Message. Default to the left -->
-                        <div class="direct-chat-msg">
-                          <div class="direct-chat-info clearfix">
-                            <span class="direct-chat-name pull-left">Alexander Pierce</span>
-                            <span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>
-                          </div><!-- /.direct-chat-info -->
-                          <img class="direct-chat-img" src=" {% static 'dist/img/user1-128x128.jpg' %}" alt="message user image"><!-- /.direct-chat-img -->
-                          <div class="direct-chat-text">
-                            Is this template really for free? That's unbelievable!
-                          </div><!-- /.direct-chat-text -->
-                        </div><!-- /.direct-chat-msg -->
-
-                        <!-- Message to the right -->
-                        <div class="direct-chat-msg right">
-                          <div class="direct-chat-info clearfix">
-                            <span class="direct-chat-name pull-right">Sarah Bullock</span>
-                            <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>
-                          </div><!-- /.direct-chat-info -->
-                          <img class="direct-chat-img" src="{% static 'dist/img/user3-128x128.jpg' %}" alt="message user image"><!-- /.direct-chat-img -->
-                          <div class="direct-chat-text">
-                            You better believe it!
-                          </div><!-- /.direct-chat-text -->
-                        </div><!-- /.direct-chat-msg -->
 
                       </div><!--/.direct-chat-messages-->
 
                       <!-- Contacts are loaded here -->
                       <div class="direct-chat-contacts">
                         <ul class="contacts-list">
-                             {% for following in followings %}
+                         {% for following in followings %}
                           <li>
-                            <a href="#">
+                            <a id="send" href="#">
                               <img class="contacts-list-img" src="{% static 'dist/img/user1-128x128.jpg' %}">
                               <div class="contacts-list-info">
-                                <span onclick="sendUser()" id="user_to" class="contacts-list-name">
-                                  {{ following.following }}
+                                <span id="user_to" class="contacts-list-name">
+                                    {{ following.following }}
                                   <small class="contacts-list-date pull-right">2/28/2015</small>
                                 </span>
                                 <span class="contacts-list-msg">How have you been? I was...</span>
                               </div><!-- /.contacts-list-info -->
-
                             </a>
                           </li><!-- End Contact Item -->
-                            {% endfor %}
+                          {% endfor %}
                         </ul><!-- /.contatcts-list -->
                       </div><!-- /.direct-chat-pane -->
                     </div><!-- /.box-body -->
                     <div class="box-footer">
-                      <form action="{% url 'send_message' user.username %}" enctype="multipart/form-data" method="post">
+                      <form action="{% url 'send_message' %}" enctype="multipart/form-data" method="post">
                           {% csrf_token %}
                         <div class="input-group">
                           <input type="text" name="message" placeholder="Type message..." class="form-control">
                           <span class="input-group-btn">
-                            <button type="submit" class="btn btn-warning btn-flat">Send</button>
+                            <button type="submit" id="#sendMessage" class="btn btn-warning btn-flat">Send</button>
                           </span>
                         </div>
                       </form>
                     </div><!-- /.box-footer-->
                   </div><!--/.direct-chat -->
-
-
-
             </div><!-- /.col -->
-            <div class="col-md-8">
+            <div class="col-md-4">
               <div class="box box-primary">
                 <div class="box-header with-border">
-                  <h3 class="box-title">Inbox</h3>
-                  <div class="box-tools pull-right">
-                    <div class="has-feedback">
-                      <input type="text" class="form-control input-sm" placeholder="Search Mail">
-                      <span class="glyphicon glyphicon-search form-control-feedback"></span>
-                    </div>
-                  </div><!-- /.box-tools -->
+                  <h3 class="box-title">Contact List</h3>
                 </div><!-- /.box-header -->
                 <div class="box-body no-padding">
                   <div class="mailbox-controls">
@@ -315,26 +266,20 @@
                       <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
                     </div><!-- /.btn-group -->
                     <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                    <div class="pull-right">
-                      1-50/200
-                      <div class="btn-group">
-                        <button class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
-                        <button class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                      </div><!-- /.btn-group -->
-                    </div><!-- /.pull-right -->
                   </div>
                   <div class="table-responsive mailbox-messages">
                     <table class="table table-hover table-striped">
                       <tbody>
+                      {% for following in followings %}
+                          {% csrf_token %}
                         <tr>
+
                           <td><input type="checkbox"></td>
-                          <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                          <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                          <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...</td>
+                          <td class="mailbox-name"><button onclick="getUser('{{ following.following }}','{{ following.following.id }}','{{ request.user }}')">{{ following.following }}</button></td>
                           <td class="mailbox-attachment"></td>
                           <td class="mailbox-date">5 mins ago</td>
                         </tr>
-
+                        {% endfor %}
                       </tbody>
                     </table><!-- /.table -->
                   </div><!-- /.mail-box-messages -->
@@ -349,13 +294,6 @@
                       <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
                     </div><!-- /.btn-group -->
                     <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                    <div class="pull-right">
-                      1-50/200
-                      <div class="btn-group">
-                        <button class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
-                        <button class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                      </div><!-- /.btn-group -->
-                    </div><!-- /.pull-right -->
                   </div>
                 </div>
               </div><!-- /. box -->
@@ -551,18 +489,56 @@
     <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
     <!-- Page Script -->
     <script type="text/javascript">
-        function sendUser(){
-            var user = $('#user_to')
-         $.ajax({
-            url:'{% url 'all_messages' %}',
-            type:"GET",
-            datatype:"json",
-            user: user,
-            success: function (json){
-                alert(json['user']);
-            }
-        });
+      function compare(a,b) {
+          if (a.datetime < b.datetime)
+            return -1;
+          else if (a.datetime> b.datetime)
+            return 1;
+          else
+            return 0;
         }
+
+      function getUser(username, userId){
+          var data = {name: username};
+          $.ajax({
+                  type:'GET',
+                  url:'http://127.0.0.1:8000/show_message',
+                  data:data,
+                  contentType: "application/json",
+                  success:function(response){
+                      var x = '{{ username }}'
+                      response.sort(compare);
+                      for(var i = 0; i < response.length; i++){
+                          var message = response[i];
+
+                          if(userId.toString() === message.send_from.toString()){
+                              var mes = '<div class="direct-chat-msg">'+
+                                          '<div class="direct-chat-info clearfix">'+
+                                            '<span class="direct-chat-name pull-left" >' + username + '</span>'+
+                                            '<span class="direct-chat-timestamp pull-right">' + message.datetime + '</span>'+
+                                          '</div>'+
+                                          '<img class="direct-chat-img" src=" {% static 'dist/img/user1-128x128.jpg' %}" alt="message user image">'+
+                                          '<div class="direct-chat-text">'+ message.content +
+                                          '</div>'+
+                                        '</div>' ;
+                               $('#message_content').html($('#message_content').html() + mes);
+                          }
+                          else{
+                              var mes = '<div class="direct-chat-msg right">'+
+                                  '<div class="direct-chat-info clearfix">'+
+                                    '<span class="direct-chat-name pull-right" >' +  x + '</span>'+
+                                    '<span class="direct-chat-timestamp pull-left">' + message.datetime + '</span>'+
+                                  '</div>'+
+                                  '<img class="direct-chat-img" src=" {% static 'dist/img/user1-128x128.jpg' %}" alt="message user image">'+
+                                  '<div class="direct-chat-text">'+ message.content +
+                                  '</div>'+
+                                '</div>' ;
+                               $('#message_content').html($('#message_content').html() + mes);
+                          }
+                      }
+                  }
+              })
+      }
       $(function () {
         //Enable iCheck plugin for checkboxes
         //iCheck for checkbox and radio inputs
