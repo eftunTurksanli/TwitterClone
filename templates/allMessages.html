@@ -35,11 +35,11 @@
 
       <header class="main-header">
         <!-- Logo -->
-        <a href="../../index2.html" class="logo">
+        <a href="{% static 'main' %}" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini"><b>A</b>LT</span>
+          <span class="logo-lg"><b>Bakkal</b></span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>Admin</b>LTE</span>
+          <span class="logo-lg"><b>Bakkal</b></span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -52,12 +52,6 @@
           </a>
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
-              <!-- Messages: style can be found in dropdown.less-->
-              <li class="dropdown messages-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <i class="fa fa-envelope-o"></i>
-                  <span class="label label-success">4</span>
-                </a>
                 <ul class="dropdown-menu">
                   <li class="header">You have 4 messages</li>
                   <li>
@@ -136,14 +130,14 @@
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="user-image" alt="User Image">
-                  <span class="hidden-xs">Alexander Pierce</span>
+                  <span class="hidden-xs">{{ username }}</span>
                 </a>
                 <ul class="dropdown-menu">
                   <!-- User image -->
                   <li class="user-header">
                     <img src="{% static 'dist/img/user2-160x160.jpg' %}" class="img-circle" alt="User Image">
                     <p>
-                      Alexander Pierce - Web Developer
+                      {{ username }}
                       <small>Member since Nov. 2012</small>
                     </p>
                   </li>
@@ -162,10 +156,10 @@
                   <!-- Menu Footer-->
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="#" class="btn btn-default btn-flat">Profile</a>
+                      <a href="{% url 'profile' username %}" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                      <a href="{% url 'log_out' %}" class="btn btn-default btn-flat">Sign out</a>
                     </div>
                   </li>
                 </ul>
@@ -205,7 +199,9 @@
                     <div class="box-header with-border">
                       <h3 class="box-title">Direct Chat</h3>
                       <div class="box-tools pull-right">
-                        <span data-toggle="tooltip" title="3 New Messages" class="badge bg-yellow">3</span>
+                        <form action="{% url 'delete_conversation' %}" method="POST">{% csrf_token %}
+                            <button class="btn btn-box-tool"><i class="fa fa-trash-o"></i></button>
+                        </form>
                         <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                         <button class="btn btn-box-tool" data-toggle="tooltip" title="Contacts" data-widget="chat-pane-toggle"><i class="fa fa-comments"></i></button>
                         <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -230,7 +226,6 @@
                                     {{ following.following }}
                                   <small class="contacts-list-date pull-right">2/28/2015</small>
                                 </span>
-                                <span class="contacts-list-msg">How have you been? I was...</span>
                               </div><!-- /.contacts-list-info -->
                             </a>
                           </li><!-- End Contact Item -->
@@ -239,15 +234,13 @@
                       </div><!-- /.direct-chat-pane -->
                     </div><!-- /.box-body -->
                     <div class="box-footer">
-                      <form action="{% url 'send_message' %}" enctype="multipart/form-data" method="post">
-                          {% csrf_token %}
+                        {% csrf_token %}
                         <div class="input-group">
-                          <input type="text" name="message" placeholder="Type message..." class="form-control">
+                          <input type="text" id="message" placeholder="Type message..." class="form-control">
                           <span class="input-group-btn">
-                            <button type="submit" id="#sendMessage" class="btn btn-warning btn-flat">Send</button>
+                            <button type="submit" id="sendMessage" class="btn btn-warning btn-flat">Send</button>
                           </span>
                         </div>
-                      </form>
                     </div><!-- /.box-footer-->
                   </div><!--/.direct-chat -->
             </div><!-- /.col -->
@@ -258,26 +251,14 @@
                 </div><!-- /.box-header -->
                 <div class="box-body no-padding">
                   <div class="mailbox-controls">
-                    <!-- Check all button -->
-                    <button class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
-                    <div class="btn-group">
-                      <button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                      <button class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
-                      <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
-                    </div><!-- /.btn-group -->
-                    <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                  </div>
                   <div class="table-responsive mailbox-messages">
                     <table class="table table-hover table-striped">
                       <tbody>
                       {% for following in followings %}
                           {% csrf_token %}
                         <tr>
-
-                          <td><input type="checkbox"></td>
                           <td class="mailbox-name"><button onclick="getUser('{{ following.following }}','{{ following.following.id }}','{{ request.user }}')">{{ following.following }}</button></td>
                           <td class="mailbox-attachment"></td>
-                          <td class="mailbox-date">5 mins ago</td>
                         </tr>
                         {% endfor %}
                       </tbody>
@@ -285,16 +266,6 @@
                   </div><!-- /.mail-box-messages -->
                 </div><!-- /.box-body -->
                 <div class="box-footer no-padding">
-                  <div class="mailbox-controls">
-                    <!-- Check all button -->
-                    <button class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
-                    <div class="btn-group">
-                      <button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                      <button class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
-                      <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
-                    </div><!-- /.btn-group -->
-                    <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                  </div>
                 </div>
               </div><!-- /. box -->
             </div><!-- /.col -->
@@ -489,6 +460,7 @@
     <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
     <!-- Page Script -->
     <script type="text/javascript">
+      var kullaniciadi = "";
       function compare(a,b) {
           if (a.datetime < b.datetime)
             return -1;
@@ -496,9 +468,38 @@
             return 1;
           else
             return 0;
-        }
+      }
+
+      $('#sendMessage').click(function(){
+          var message = $('#message').val();
+          send_from = '{{ username }}'
+          var data = {
+              "message":message,
+              "username":kullaniciadi
+          };
+          $.ajax({
+              type:'POST',
+              url:'http://127.0.0.1:8000/send_message',
+              data : data,
+              dataType: "json",
+              success:function (response){
+                                var mes = '<div class="direct-chat-msg right">'+
+                                  '<div class="direct-chat-info clearfix">'+
+                                    '<span class="direct-chat-name pull-right" >' +  send_from + '</span>'+
+                                    '<span class="direct-chat-timestamp pull-left">' + response.datetime + '</span>'+
+                                  '</div>'+
+                                  '<img class="direct-chat-img" src=" {% static 'dist/img/user1-128x128.jpg' %}" alt="message user image">'+
+                                  '<div class="direct-chat-text">'+ message +
+                                  '</div>'+
+                                '</div>' ;
+                               $('#message_content').html($('#message_content').html() + mes);
+                   $('input[type="text"],input').val('');
+          }
+          })
+      })
 
       function getUser(username, userId){
+          kullaniciadi = username;
           var data = {name: username};
           $.ajax({
                   type:'GET',
@@ -539,49 +540,17 @@
                   }
               })
       }
-      $(function () {
-        //Enable iCheck plugin for checkboxes
-        //iCheck for checkbox and radio inputs
-        $('.mailbox-messages input[type="checkbox"]').iCheck({
-          checkboxClass: 'icheckbox_flat-blue',
-          radioClass: 'iradio_flat-blue'
-        });
 
-        //Enable check and uncheck all functionality
-        $(".checkbox-toggle").click(function () {
-          var clicks = $(this).data('clicks');
-          if (clicks) {
-            //Uncheck all checkboxes
-            $(".mailbox-messages input[type='checkbox']").iCheck("uncheck");
-            $(".fa", this).removeClass("fa-check-square-o").addClass('fa-square-o');
-          } else {
-            //Check all checkboxes
-            $(".mailbox-messages input[type='checkbox']").iCheck("check");
-            $(".fa", this).removeClass("fa-square-o").addClass('fa-check-square-o');
-          }
-          $(this).data("clicks", !clicks);
-        });
-
-        //Handle starring for glyphicon and font awesome
-        $(".mailbox-star").click(function (e) {
-          e.preventDefault();
-          //detect type
-          var $this = $(this).find("a > i");
-          var glyph = $this.hasClass("glyphicon");
-          var fa = $this.hasClass("fa");
-
-          //Switch states
-          if (glyph) {
-            $this.toggleClass("glyphicon-star");
-            $this.toggleClass("glyphicon-star-empty");
-          }
-
-          if (fa) {
-            $this.toggleClass("fa-star");
-            $this.toggleClass("fa-star-o");
-          }
-        });
-      });
+      function ajaxcall(){
+          var notification = $('#notification').val();
+          $.ajax({
+              type:'GET',
+              url:'http://127.0.0.1:8000/check_message',
+              success:function (response){
+              }
+          })
+      }
+      setInterval(ajaxcall, 30000);
     </script>
     <!-- AdminLTE for demo purposes -->
     <script src="{% static 'dist/js/demo.js' %}"></script>

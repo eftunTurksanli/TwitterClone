@@ -34,6 +34,8 @@ urlpatterns = [
     url(r'^all_messages/(?P<username>\w+)$', views.all_messages, name='all_messages'),
     url(r'^show_message$', views.show_message, name='show_message'),
     url(r'^send_message$', views.send_message, name='send_message'),
+    url(r'^delete_conversation', views.delete_conversation, name='delete_conversation'),
+    url(r'^check_message', views.check_message, name='check_message'),
     ]
 
 if settings.DEBUG:

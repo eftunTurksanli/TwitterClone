@@ -400,5 +400,17 @@
     <script src="{% static 'dist/js/app.min.js' %}"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{% static 'dist/js/demo.js' %}"></script>
+
+    <script>
+      function ajaxcall(){
+          $.ajax({
+              type:'GET',
+              url:'http://127.0.0.1:8000/check_message',
+              success:function (response){
+              }
+          })
+      }
+      setInterval(ajaxcall, 30000);
+      </script>
   </body>
 </html>

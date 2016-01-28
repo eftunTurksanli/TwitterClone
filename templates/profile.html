@@ -114,7 +114,7 @@
                       </li>
                     </ul>
                   </li>
-                  <li class="footer"><a href="#">See All Messages</a></li>
+                  <li class="footer"><a href="{% url 'all_messages' username %}">See All Messages</a></li>
                 </ul>
               </li>
               <!-- Notifications: style can be found in dropdown.less -->
@@ -588,5 +588,17 @@
     <script src="{% static 'dist/js/app.min.js' %}"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{% static 'dist/js/demo.js' %}"></script>
+    <script>
+
+      function ajaxcall(){
+          $.ajax({
+              type:'GET',
+              url:'http://127.0.0.1:8000/check_message',
+              success:function (response){
+              }
+          })
+      }
+      setInterval(ajaxcall, 30000);
+    </script>
   </body>
 </html>

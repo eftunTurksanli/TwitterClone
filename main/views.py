@@ -20,6 +20,7 @@ from django.http import JsonResponse
 from django.core import serializers
 
 from main.serializers import MessageSerializer
+global user1
 
 
 def register(request):
@@ -165,31 +166,46 @@ def all_messages(request, username):
 @csrf_exempt
 def show_message(request):
     if request.method == 'GET':
-        global user1
         user = request.GET['name']
         user = user.encode('ascii', 'ignore')
-        print user
-        # username = data['name']
         user1 = User.objects.get(username=user)
-        all_messages = []
         message1 = Messages.objects.filter(send_from=user1, send_to=request.user)
-        for mes in message1:
-            all_messages.append(mes)
+        Messages.objects.update(send_from=user1, send_to=request.user, read=True)
         message2 = Messages.objects.filter(send_from=request.user, send_to=user1)
-        for mes in message2:
-            all_messages.append(mes)
         serializer = MessageSerializer(message1, many=True)
         serializer2 = MessageSerializer(message2, many=True)
         return JsonResponse(serializer.data + serializer2.data, safe=False)
 
 
 @login_required(login_url='login_page')
+@csrf_exempt
 def send_message(request):
-    print user1
     if request.method == 'POST':
-        message = request.POST['message']
-        Messages.objects.create(send_from=request.user, send_to=user1, content=message)
-        return redirect(reverse('all_messages', args=(request.user,)))
+        message = request.POST.get('message')
+        username = request.POST.get('username')
+        content = message.encode('ascii', 'ignore')
+        user1 = User.objects.get(username=username)
+        message = Messages.objects.create(send_from=request.user,
+                                          send_to=user1,
+                                          content=content,
+                                          datetime=datetime.datetime.now())
+        serializer = MessageSerializer(message)
+        return JsonResponse(serializer.data)
+
+
+@login_required(login_url='login_page')
+def check_message(request):
+    all_messages = Messages.objects.filter(send_to=request.user, read=False)
+    notification = len(all_messages)
+    return HttpResponse(notification)
+
+
+@login_required(login_url='login_page')
+def delete_conversation(request):
+    if request.method == 'POST':
+        conversation = Messages.objects.all()
+        conversation.delete()
+        return HttpResponse(1)
 
 
 @login_required(login_url='login_page')

@@ -30,3 +30,4 @@ class Messages(models.Model):
     send_to = models.ForeignKey(User, related_name='send_to')
     content = models.TextField(max_length=500)
     datetime = models.DateTimeField(blank=False, auto_now=False, auto_now_add=True)
+    read = models.BooleanField(default=False)
