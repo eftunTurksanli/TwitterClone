@@ -29,6 +29,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             user.save()
+            MyUser.objects.create(user=user)
             return redirect(reverse('login_page'))
         else:
             messages.add_message(request, messages.ERROR, 'registration incomplete')
@@ -64,11 +65,23 @@ def login_page(request):
 
 @login_required(login_url='login_page')
 def main(request):
+        images = []
+        all = []
         tweets = Tweet.objects.all().order_by('-date')
-        #image = MyUser.objects.get(user=tweets)
+        length = len(tweets)
+        username = request.user.username
+        users = []
+        for u in tweets:
+            user = u.owner
+            user = MyUser.objects.get(user=user.id)
+            users.append(user)
+        for u in users:
+            images.append(u.image.url)
+        all = users + images
+        print all
         if not tweets:
             tweets = None
-        return render(request, 'main.html', {'tweets': tweets, 'username': request.user.username})
+        return render(request, 'main.html', locals())
 
 
 @login_required(login_url='login_page')
@@ -88,10 +101,13 @@ def likes(request, username, id):
 def new_tweet(request):
     if request.method == 'POST':
         tweet = request.POST['tweet']
-        image = request.FILES['image']
         time = datetime.datetime.now()
-        Tweet.objects.create(owner=request.user, context=tweet, image=image, date=time)
-        return redirect(reverse('main'))
+        if request.FILES != {}:
+            image = request.FILES['image']
+            Tweet.objects.create(owner=request.user, context=tweet, image=image, date=time)
+        else:
+            Tweet.objects.create(owner=request.user, context=tweet, date=time)
+        return HttpResponseRedirect(reverse(main))
 
 
 @login_required(login_url='login_page')
@@ -170,7 +186,7 @@ def show_message(request):
         user = user.encode('ascii', 'ignore')
         user1 = User.objects.get(username=user)
         message1 = Messages.objects.filter(send_from=user1, send_to=request.user)
-        Messages.objects.update(send_from=user1, send_to=request.user, read=True)
+        Messages.objects.update(send_from=request.user, send_to=user1, read=True)
         message2 = Messages.objects.filter(send_from=request.user, send_to=user1)
         serializer = MessageSerializer(message1, many=True)
         serializer2 = MessageSerializer(message2, many=True)
@@ -185,6 +201,8 @@ def send_message(request):
         username = request.POST.get('username')
         content = message.encode('ascii', 'ignore')
         user1 = User.objects.get(username=username)
+        print request.user
+        print user1
         message = Messages.objects.create(send_from=request.user,
                                           send_to=user1,
                                           content=content,

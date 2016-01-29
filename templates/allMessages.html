@@ -52,6 +52,11 @@
           </a>
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+               <li  class="dropdown messages-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i  class="fa fa-envelope-o"></i>
+                        <span id="notification" class="label label-success"></span>
+                    </a>
                 <ul class="dropdown-menu">
                   <li class="header">You have 4 messages</li>
                   <li>
@@ -494,6 +499,7 @@
                                 '</div>' ;
                                $('#message_content').html($('#message_content').html() + mes);
                    $('input[type="text"],input').val('');
+                  $('input[type="text"],input').focus();
           }
           })
       })
@@ -507,13 +513,14 @@
                   data:data,
                   contentType: "application/json",
                   success:function(response){
+                      $('#message_content').html('');
                       var x = '{{ username }}'
                       response.sort(compare);
                       for(var i = 0; i < response.length; i++){
                           var message = response[i];
 
                           if(userId.toString() === message.send_from.toString()){
-                              var mes = '<div class="direct-chat-msg">'+
+                              var mes = '<div id="deneme" class="direct-chat-msg">'+
                                           '<div class="direct-chat-info clearfix">'+
                                             '<span class="direct-chat-name pull-left" >' + username + '</span>'+
                                             '<span class="direct-chat-timestamp pull-right">' + message.datetime + '</span>'+
@@ -525,7 +532,7 @@
                                $('#message_content').html($('#message_content').html() + mes);
                           }
                           else{
-                              var mes = '<div class="direct-chat-msg right">'+
+                              var mes = '<div id="deneme1" class="direct-chat-msg right">'+
                                   '<div class="direct-chat-info clearfix">'+
                                     '<span class="direct-chat-name pull-right" >' +  x + '</span>'+
                                     '<span class="direct-chat-timestamp pull-left">' + message.datetime + '</span>'+
@@ -541,18 +548,9 @@
               })
       }
 
-      function ajaxcall(){
-          var notification = $('#notification').val();
-          $.ajax({
-              type:'GET',
-              url:'http://127.0.0.1:8000/check_message',
-              success:function (response){
-              }
-          })
-      }
-      setInterval(ajaxcall, 30000);
     </script>
     <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/checkMessage.js' %}"></script>
     <script src="{% static 'dist/js/demo.js' %}"></script>
   </body>
 </html>

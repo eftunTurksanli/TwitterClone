@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class MyUser(models.Model):
     user = models.OneToOneField(User)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='media/', default='/static/dist/img/photo4.jpg')
 
 
 class Tweet(models.Model):
